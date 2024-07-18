@@ -5,8 +5,8 @@
 int main()
 {
     const char* video_file = "/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/video/output_0.avi";
-    cv::Size board_pattern(10, 7);
-    float board_cellsize = 0.021f;
+    cv::Size board_pattern(9, 6);
+    float board_cellsize = 0.025f;
     bool select_images = true;
 
     // Open a video
@@ -24,19 +24,25 @@ int main()
 
         if (select_images)
         {
+            
             // Show the image and keep it if selected
             cv::imshow("Camera Calibration", image);
             int key = cv::waitKey(1);
             if (key == 32)                              // Space: Pause and show corners
             {
+                cv::Mat gray;
+                cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+
+                int grayKey = cv::waitKey();
+                if (grayKey == 27) break; // 按 ESC 键退出
                 std::vector<cv::Point2f> pts;
-                bool complete = cv::findChessboardCorners(image, board_pattern, pts);
+                bool complete = cv::findChessboardCorners(gray, board_pattern, pts, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
                 std::cout << "findChessboardCorners complete: " << complete << std::endl;
                 cv::Mat display = image.clone();
                 cv::drawChessboardCorners(display, board_pattern, pts, complete);
                 cv::imshow("Camera Calibration", display);
                 key = cv::waitKey();
-                if (key == 13) images.push_back(image); // Enter: Select the image
+                if (key == 13 && complete) images.push_back(image); // Enter: Select the image
             }
             if (key == 27) break;                       // ESC: Exit (Complete image selection)
         }
@@ -51,10 +57,12 @@ int main()
     std::vector<std::vector<cv::Point2f>> img_points;
     for (size_t i = 0; i < images.size(); i++)
     {
+        cv::Mat gray;
+        cv::cvtColor(images[i], gray, cv::COLOR_BGR2GRAY);
         std::vector<cv::Point2f> pts;
         //if (cv::findChessboardCorners(images[i], board_pattern, pts))
          //   img_points.push_back(pts);
-         bool found = cv::findChessboardCorners(images[i], board_pattern, pts);
+         bool found = cv::findChessboardCorners(gray, board_pattern, pts, cv::CALIB_CB_ADAPTIVE_THRESH);
         if (found) {
             std::cout << "Corners found in image " << i << std::endl;
             img_points.push_back(pts);

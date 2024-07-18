@@ -31,7 +31,8 @@ include(GNUInstallDirs)
 link_directories(${CMAKE_SOURCE_DIR} /home/haz/Desktop/SensorFusion/libcamera2opencv-master/build)
 
 add_executable(camCalib
-  main.cpp
+  
+  distortion_correction.cpp
 )
 
 target_link_libraries(camCalib PkgConfig::LIBCAMERA)
