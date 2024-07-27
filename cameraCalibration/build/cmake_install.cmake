@@ -1,4 +1,4 @@
-# Install script for directory: /home/haz/Desktop/SensorFusion/libcamera2opencv-master/cameraCalibration
+# Install script for directory: /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/haz/Desktop/SensorFusion/libcamera2opencv-master/cameraCalibration/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
