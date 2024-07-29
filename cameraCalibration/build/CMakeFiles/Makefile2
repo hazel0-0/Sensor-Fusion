@@ -82,12 +82,12 @@ clean: CMakeFiles/qtviewer_autogen.dir/clean
 CMakeFiles/qtviewer.dir/all: CMakeFiles/qtviewer_autogen.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target qtviewer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target qtviewer"
 .PHONY : CMakeFiles/qtviewer.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/qtviewer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/qtviewer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles 0
 .PHONY : CMakeFiles/qtviewer.dir/rule
@@ -108,7 +108,7 @@ CMakeFiles/qtviewer.dir/clean:
 CMakeFiles/qtviewer_autogen.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer_autogen.dir/build.make CMakeFiles/qtviewer_autogen.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer_autogen.dir/build.make CMakeFiles/qtviewer_autogen.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles --progress-num=6 "Built target qtviewer_autogen"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/CMakeFiles --progress-num=8 "Built target qtviewer_autogen"
 .PHONY : CMakeFiles/qtviewer_autogen.dir/all
 
 # Build rule for subdir invocation for target.

@@ -87,6 +87,18 @@
 			null
 		],
 		[
+			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/distortionCorrection.h",
+			"MU",
+			"EWIEGA46WW/moc_distortionCorrection.cpp",
+			null
+		],
+		[
+			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/opticFlow.h",
+			"MU",
+			"EWIEGA46WW/moc_opticFlow.cpp",
+			null
+		],
+		[
 			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/window.h",
 			"MU",
 			"EWIEGA46WW/moc_window.cpp",
@@ -110,10 +122,10 @@
 		"/home/haz/Desktop/SensorFusion/libcamera2opencv-master",
 		"/usr/include/libcamera",
 		"/usr/include/aarch64-linux-gnu/qt5",
-		"/usr/include/aarch64-linux-gnu/qt5/QtWidgets",
-		"/usr/include/aarch64-linux-gnu/qt5/QtGui",
 		"/usr/include/aarch64-linux-gnu/qt5/QtCore",
 		"/usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++",
+		"/usr/include/aarch64-linux-gnu/qt5/QtGui",
+		"/usr/include/aarch64-linux-gnu/qt5/QtWidgets",
 		"/usr/include/opencv4",
 		"/usr/include/c++/12",
 		"/usr/include/aarch64-linux-gnu/c++/12",
@@ -153,7 +165,17 @@
 			null
 		],
 		[
+			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/distortionCorrection.cpp",
+			"MU",
+			null
+		],
+		[
 			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/main.cpp",
+			"MU",
+			null
+		],
+		[
+			"/home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/opticFlow.cpp",
 			"MU",
 			null
 		],

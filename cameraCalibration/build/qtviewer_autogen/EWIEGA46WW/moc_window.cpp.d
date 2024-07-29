@@ -2,6 +2,8 @@
   /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/build/qtviewer_autogen/moc_predefs.h \
   /home/haz/Desktop/SensorFusion/libcamera2opencv-master/libcam2opencv.h \
   /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/calibration.h \
+  /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/distortionCorrection.h \
+  /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/opticFlow.h \
   /usr/include/aarch64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/aarch64-linux-gnu/bits/byteswap.h \
   /usr/include/aarch64-linux-gnu/bits/confname.h \
@@ -318,6 +320,7 @@
   /usr/include/c++/12/compare \
   /usr/include/c++/12/complex \
   /usr/include/c++/12/concepts \
+  /usr/include/c++/12/condition_variable \
   /usr/include/c++/12/cstddef \
   /usr/include/c++/12/cstdint \
   /usr/include/c++/12/cstdio \

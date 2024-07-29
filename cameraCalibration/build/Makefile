@@ -166,6 +166,30 @@ calibration.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/calibration.cpp.s
 .PHONY : calibration.cpp.s
 
+distortionCorrection.o: distortionCorrection.cpp.o
+.PHONY : distortionCorrection.o
+
+# target to build an object file
+distortionCorrection.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/distortionCorrection.cpp.o
+.PHONY : distortionCorrection.cpp.o
+
+distortionCorrection.i: distortionCorrection.cpp.i
+.PHONY : distortionCorrection.i
+
+# target to preprocess a source file
+distortionCorrection.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/distortionCorrection.cpp.i
+.PHONY : distortionCorrection.cpp.i
+
+distortionCorrection.s: distortionCorrection.cpp.s
+.PHONY : distortionCorrection.s
+
+# target to generate assembly for a file
+distortionCorrection.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/distortionCorrection.cpp.s
+.PHONY : distortionCorrection.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -189,6 +213,30 @@ main.s: main.cpp.s
 main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/main.cpp.s
 .PHONY : main.cpp.s
+
+opticFlow.o: opticFlow.cpp.o
+.PHONY : opticFlow.o
+
+# target to build an object file
+opticFlow.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/opticFlow.cpp.o
+.PHONY : opticFlow.cpp.o
+
+opticFlow.i: opticFlow.cpp.i
+.PHONY : opticFlow.i
+
+# target to preprocess a source file
+opticFlow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/opticFlow.cpp.i
+.PHONY : opticFlow.cpp.i
+
+opticFlow.s: opticFlow.cpp.s
+.PHONY : opticFlow.s
+
+# target to generate assembly for a file
+opticFlow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qtviewer.dir/build.make CMakeFiles/qtviewer.dir/opticFlow.cpp.s
+.PHONY : opticFlow.cpp.s
 
 qtviewer_autogen/mocs_compilation.o: qtviewer_autogen/mocs_compilation.cpp.o
 .PHONY : qtviewer_autogen/mocs_compilation.o
@@ -251,9 +299,15 @@ help:
 	@echo "... calibration.o"
 	@echo "... calibration.i"
 	@echo "... calibration.s"
+	@echo "... distortionCorrection.o"
+	@echo "... distortionCorrection.i"
+	@echo "... distortionCorrection.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... opticFlow.o"
+	@echo "... opticFlow.i"
+	@echo "... opticFlow.s"
 	@echo "... qtviewer_autogen/mocs_compilation.o"
 	@echo "... qtviewer_autogen/mocs_compilation.i"
 	@echo "... qtviewer_autogen/mocs_compilation.s"

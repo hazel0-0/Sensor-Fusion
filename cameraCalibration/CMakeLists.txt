@@ -40,10 +40,12 @@ add_executable(qtviewer
   window.cpp
   main.cpp
   calibration.cpp
+  opticFlow.cpp
+  distortionCorrection.cpp
 )
 
 target_link_libraries(qtviewer PkgConfig::LIBCAMERA)
-target_link_libraries(qtviewer Qt5::Widgets)
+target_link_libraries(qtviewer Qt5::Core Qt5::Gui Qt5::Widgets)
 target_link_libraries(qtviewer qwt-qt5)
 target_link_libraries(qtviewer ${OpenCV_LIBS})
 target_link_libraries(qtviewer cam2opencv)

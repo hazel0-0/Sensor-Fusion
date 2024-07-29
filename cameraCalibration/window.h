@@ -8,6 +8,9 @@
 #include <QWidget>
 #include "libcam2opencv.h"
 #include "calibration.h"
+#include "opticFlow.h"
+#include "distortionCorrection.h"
+
 
 
 class Window : public QWidget
@@ -19,18 +22,17 @@ public:
     ~Window();
 
     void updateImage(const cv::Mat &mat);
-    void saveImage(const cv::Mat &mat);
-    void Recording();
 
 
 private:
     QwtThermo    *thermo;
     QHBoxLayout  *hLayout;
     QLabel       *image;
-    bool recording;
-    std::vector<cv::Mat> savedImages;
+    bool calibrate;
+    bool showRectify;
+    
     QPushButton *calibrateButton;
-    QPushButton *recordButton;
+    QPushButton *rectifyButton;
 
     struct MyCallback : Libcam2OpenCV::Callback {
         Window* window = nullptr;
@@ -44,11 +46,16 @@ private:
 
     Libcam2OpenCV camera;
     MyCallback myCallback;
-    float board_cellsize = 0.0157f;
     int counter = 0;
+    
+    Calibration calibrator;
+    OpticalFlowTracker tracker; // Add the OpticalFlowTracker instance
+    DistortionCorrection distortionCorrector; // Add the DistortionCorrection instance
 
 private:
     void onCalibrateButtonClicked();
+    void onRectifyButtonClicked();
+    
 };
 
 

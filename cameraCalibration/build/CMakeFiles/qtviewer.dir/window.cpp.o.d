@@ -509,4 +509,7 @@ CMakeFiles/qtviewer.dir/window.cpp.o: \
  /usr/include/libcamera/libcamera/property_ids.h \
  /usr/include/libcamera/libcamera/transform.h \
  /usr/include/libcamera/libcamera/version.h \
- /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/calibration.h
+ /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/calibration.h \
+ /usr/include/c++/12/condition_variable \
+ /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/opticFlow.h \
+ /home/haz/Desktop/SensorFusion/libcamera2opencv-master/qtviewer/distortionCorrection.h

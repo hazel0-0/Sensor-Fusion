@@ -1,22 +1,57 @@
 #include "calibration.h"
 #include <iostream>
 
-Calibration::Calibration(const std::vector<cv::Mat>& images, cv::Size boardSize, float squareSize)
-    : images(images), boardSize(boardSize), squareSize(squareSize) {}
+Calibration::Calibration()
+    : running(false), frameReady(false), 
+    boardSize(9, 6), squareSize(0.0145f) {}
 
-void Calibration::performCalibration() {
-    std::vector<std::vector<cv::Point2f>> imagePoints;
-    std::vector<std::vector<cv::Point3f>> objectPoints(1);
+Calibration::~Calibration() {
+    stop();
+}
 
-    for (int i = 0; i < boardSize.height; ++i) {
-        for (int j = 0; j < boardSize.width; ++j) {
-            objectPoints[0].push_back(cv::Point3f(j * squareSize, i * squareSize, 0));
-        }
+void Calibration::start() {
+    running = true;
+    calibrationThread = std::thread(&Calibration::processImages, this);
+}
+
+void Calibration::stop() {
+    frameCondition.notify_all();
+    if (calibrationThread.joinable()) {
+        calibrationThread.join();
     }
+}
 
-    objectPoints.resize(images.size(), objectPoints[0]);
+void Calibration::addFrame(const cv::Mat& frame) {
+    {
+        std::lock_guard<std::mutex> lock(frameMutex);
+        frame.copyTo(currentFrame);
+        frameReady = true;
+    }
+    frameCondition.notify_one();
+}
+void Calibration::stopCollection(){
+    running = false;
+}
+void Calibration::processImages() {
+    try {
+    while (running) {
+        //callback();
+        cv::Mat image;
+        {
+            std::unique_lock<std::mutex> lock(frameMutex);
+            frameCondition.wait(lock, [this] { return frameReady || !running; });
+            if (!running)
+                break;
+            frameReady = false;
 
-    for (const auto& image : images) {
+            image = currentFrame.clone();
+        }
+        
+        if (image.empty()) 
+        {
+        continue;
+        }
+
         std::vector<cv::Point2f> pointBuf;
         bool found = cv::findChessboardCorners(image, boardSize, pointBuf,
                                                cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
@@ -25,9 +60,38 @@ void Calibration::performCalibration() {
             cv::cvtColor(image, viewGray, cv::COLOR_BGR2GRAY);
             cv::cornerSubPix(viewGray, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
                              cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
-            imagePoints.push_back(pointBuf);
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                imagePoints.push_back(pointBuf);
+            }
+            
+        }
+        
+    }   
+    performCalibration();
+    } catch (const std::exception &e) {
+        std::cerr << "Exception caught in processImages: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown exception caught in processImages" << std::endl;
+    }
+    stop();
+}
+
+void Calibration::performCalibration() {
+    try {
+    std::lock_guard<std::mutex> lock(mtx);
+    if (imagePoints.empty()) {
+        std::cout << "No corners found in any image. Calibration cannot proceed." << std::endl;
+        return;
+    }
+
+    std::vector<std::vector<cv::Point3f>> objectPoints(1);
+    for (int i = 0; i < boardSize.height; ++i) {
+        for (int j = 0; j < boardSize.width; ++j) {
+            objectPoints[0].push_back(cv::Point3f(j * squareSize, i * squareSize, 0));
         }
     }
+    objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
     cv::Mat cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
     cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_64F);
@@ -38,4 +102,10 @@ void Calibration::performCalibration() {
     std::cout << "* RMS error = " << rms << std::endl;
     std::cout << "* Camera matrix (K) = " << std::endl << "  " << cameraMatrix.row(0) << cameraMatrix.row(1) << cameraMatrix.row(2) << std::endl;
     std::cout << "* Distortion coefficient (k1, k2, p1, p2, k3, ...) = " << std::endl << "  " << distCoeffs.t() << std::endl;
+    
+    } catch (const std::exception &e) {
+        std::cerr << "Exception caught in performCalibration: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown exception caught in performCalibration" << std::endl;
+    }
 }
