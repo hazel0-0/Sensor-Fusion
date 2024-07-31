@@ -1,7 +1,7 @@
 #include "window.h"
 #include <iostream>
 
-Window::Window() : calibrate(false) , showRectify(false), calibrator(), distortionCorrector(), tracker(){
+Window::Window() : calibrate(false) , record(false), showRectify(false), calibrator(), distortionCorrector(), tracker(){
     myCallback.window = this;
     camera.registerCallback(&myCallback);
     
@@ -13,14 +13,17 @@ Window::Window() : calibrate(false) , showRectify(false), calibrator(), distorti
     image = new QLabel;
 
     calibrateButton = new QPushButton("Calibrate");
+    recordButton = new QPushButton("Record");
     rectifyButton = new QPushButton("Rectify");
     connect(calibrateButton, &QPushButton::clicked, this, &Window::onCalibrateButtonClicked);
+    connect(recordButton, &QPushButton::clicked, this, &Window::onRecordButtonClicked);
     connect(rectifyButton, &QPushButton::clicked, this, &Window::onRectifyButtonClicked);
 
     hLayout = new QHBoxLayout();
     hLayout->addWidget(thermo);
     hLayout->addWidget(image);
     hLayout->addWidget(calibrateButton);
+    hLayout->addWidget(recordButton);
     hLayout->addWidget(rectifyButton);
 
     setLayout(hLayout);
@@ -28,16 +31,16 @@ Window::Window() : calibrate(false) , showRectify(false), calibrator(), distorti
     camera.start();
     tracker.start();
     
-    distortionCorrector.setFrameCallback([this](const Mat& correctedFrame) {
-        tracker.addFrame(correctedFrame);
-        QImage qimg(correctedFrame.data, correctedFrame.cols, correctedFrame.rows, correctedFrame.step, QImage::Format_RGB888);
-        image->setPixmap(QPixmap::fromImage(qimg.rgbSwapped()));
+    distortionCorrector.setFrameCallback([this](const cv::Mat& correctedFrame) {
+       // tracker.addFrame(correctedFrame);
+        display(correctedFrame);
+	record = false;
+	recordButton->setText(record ? "Stop record" : "record");
 
-        const int h = qimg.height();
-        const int w = qimg.width();
-        const QColor c = qimg.pixelColor(w / 2, h / 2);
-        thermo->setValue(c.lightness());
-        update();
+    });
+    calibrator.setFrameCallback([this](const cv::Mat& Frame) {
+	display(Frame);
+
     });
 }
 
@@ -50,22 +53,27 @@ Window::~Window() {
 
 
 void Window::updateImage(const cv::Mat &mat) {
-    if (calibrate) 
-    {
-    std::vector<cv::Point2f> pts;
-    bool found = cv::findChessboardCorners(mat, cv::Size(9,6), pts, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
     
-    if (found) {
+    if (record) 
+    {
 	calibrator.addFrame(mat);
-        cv::drawChessboardCorners(mat, cv::Size(9,6),  pts, found);
     }
-    }
-    if (showRectify) {
+    
+    else if (showRectify) 
+    {
         distortionCorrector.addFrame(mat);
     }
+    
     else
     {
    // tracker.addFrame(mat); // Process the frame with OpticalFlowTracker
+     display(mat);
+    }
+
+}
+
+void Window::display(const cv::Mat &mat) {
+    
     
     const QImage frame(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
     image->setPixmap(QPixmap::fromImage(frame));
@@ -74,11 +82,15 @@ void Window::updateImage(const cv::Mat &mat) {
     const QColor c = frame.pixelColor(w / 2, h / 2);
     thermo->setValue(c.lightness());
     update();
+    
     }
 
+void Window::onRecordButtonClicked()
+{
+    record =!record;
+    recordButton->setText(record ? "Stop record" : "record");
 }
-
-
+    
 void Window::onCalibrateButtonClicked() {
     calibrate = !calibrate;
     if(calibrate == true) calibrator.start();

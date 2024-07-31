@@ -1,9 +1,0 @@
-findChessboardCorners complete: 1
-Corners found in image 0
-## Camera Calibration Results
-* The number of applied images = 1
-* RMS error = 0.146863
-* Camera matrix (K) = 
-  [428.5051706024782, 0, 413.8113420244575][0, 424.1431678503812, 388.0143783482946][0, 0, 1]
-* Distortion coefficient (k1, k2, p1, p2, k3, ...) = 
-  [-0.002555073027858495, 0.09067783475503255, 0.001934474355701299, 0.004440005456591022, -0.08295245862517196]

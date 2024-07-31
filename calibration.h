@@ -7,7 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "libcam2opencv.h"
-
+#include "iostream"
 
 class Calibration {
 public:
@@ -18,10 +18,11 @@ public:
     void stop();
     void addFrame(const cv::Mat& frame);
     void stopCollection();
+    void setFrameCallback(std::function<void(const cv::Mat&)> callback);
+    void performCalibration();
 
 private:
     void processImages();
-    void performCalibration();
 
     std::vector<cv::Mat> images;
     cv::Size boardSize;
@@ -35,6 +36,8 @@ private:
     cv::Mat currentFrame;
     std::vector<std::vector<cv::Point2f>> imagePoints; 
     std::mutex mtx;
+    std::function<void(const cv::Mat&)> frameCallback;
+    
 };
 
 #endif // CALIBRATION_H

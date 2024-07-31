@@ -3,7 +3,7 @@
 
 Calibration::Calibration()
     : running(false), frameReady(false), 
-    boardSize(9, 6), squareSize(0.0145f) {}
+    boardSize(9, 6), squareSize(1.8) {}
 
 Calibration::~Calibration() {
     stop();
@@ -29,11 +29,19 @@ void Calibration::addFrame(const cv::Mat& frame) {
     }
     frameCondition.notify_one();
 }
+
+
 void Calibration::stopCollection(){
     running = false;
 }
+
+void Calibration::setFrameCallback(std::function<void(const cv::Mat&)> callback)
+{
+    frameCallback = callback;
+}
+
+
 void Calibration::processImages() {
-    try {
     while (running) {
         //callback();
         cv::Mat image;
@@ -48,14 +56,18 @@ void Calibration::processImages() {
         }
         
         if (image.empty()) 
-        {
         continue;
-        }
 
         std::vector<cv::Point2f> pointBuf;
         bool found = cv::findChessboardCorners(image, boardSize, pointBuf,
                                                cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
         if (found) {
+                 
+            cv::drawChessboardCorners(image, cv::Size(9,6),  pointBuf, found);
+            if (frameCallback)
+            {
+                 frameCallback(image);
+            }            
             cv::Mat viewGray;
             cv::cvtColor(image, viewGray, cv::COLOR_BGR2GRAY);
             cv::cornerSubPix(viewGray, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
@@ -66,19 +78,15 @@ void Calibration::processImages() {
             }
             
         }
+        else frameCallback(image);
         
     }   
     performCalibration();
-    } catch (const std::exception &e) {
-        std::cerr << "Exception caught in processImages: " << e.what() << std::endl;
-    } catch (...) {
-        std::cerr << "Unknown exception caught in processImages" << std::endl;
-    }
     stop();
+
 }
 
 void Calibration::performCalibration() {
-    try {
     std::lock_guard<std::mutex> lock(mtx);
     if (imagePoints.empty()) {
         std::cout << "No corners found in any image. Calibration cannot proceed." << std::endl;
@@ -102,10 +110,4 @@ void Calibration::performCalibration() {
     std::cout << "* RMS error = " << rms << std::endl;
     std::cout << "* Camera matrix (K) = " << std::endl << "  " << cameraMatrix.row(0) << cameraMatrix.row(1) << cameraMatrix.row(2) << std::endl;
     std::cout << "* Distortion coefficient (k1, k2, p1, p2, k3, ...) = " << std::endl << "  " << distCoeffs.t() << std::endl;
-    
-    } catch (const std::exception &e) {
-        std::cerr << "Exception caught in performCalibration: " << e.what() << std::endl;
-    } catch (...) {
-        std::cerr << "Unknown exception caught in performCalibration" << std::endl;
-    }
 }

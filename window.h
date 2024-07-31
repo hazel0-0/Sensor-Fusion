@@ -22,6 +22,7 @@ public:
     ~Window();
 
     void updateImage(const cv::Mat &mat);
+    void display(const cv::Mat &mat);
 
 
 private:
@@ -30,9 +31,11 @@ private:
     QLabel       *image;
     bool calibrate;
     bool showRectify;
+    bool record;
     
     QPushButton *calibrateButton;
     QPushButton *rectifyButton;
+    QPushButton *recordButton;
 
     struct MyCallback : Libcam2OpenCV::Callback {
         Window* window = nullptr;
@@ -54,7 +57,9 @@ private:
 
 private:
     void onCalibrateButtonClicked();
+    void onRecordButtonClicked();
     void onRectifyButtonClicked();
+    
     
 };
 
