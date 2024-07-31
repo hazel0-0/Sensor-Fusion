@@ -46,6 +46,12 @@ void OpticalFlowTracker::addFrame(const Mat& frame)
     }
     frameCondition.notify_one();
 }
+
+void OpticalFlowTracker::setOpticFlowCallback(std::function<void(const std::vector<Point2f>)> callback)
+{
+    opticFlowCallback = callback;
+}
+
 void OpticalFlowTracker::processFrame()
 {
 
@@ -75,6 +81,7 @@ void OpticalFlowTracker::processFrame()
         continue;
     }
 
+
     // calculate optical flow
     std::vector<uchar> status;
     std::vector<float> err;
@@ -93,10 +100,13 @@ void OpticalFlowTracker::processFrame()
             line(mask, p1[i], p0[i], colors[i], 2);
             circle(frame, p1[i], 5, colors[i], -1);
 
+
             // Print optical flow data
+            optic_Flow[i].x = p1[i].x - p0[i].x;
+            optic_Flow[i].y = p1[i].y - p0[i].y;
             cout << "Old position: (" << p0[i].x << ", " << p0[i].y << ")";
             cout << " New position: (" << p1[i].x << ", " << p1[i].y << ")";
-            cout << " Flow vector: (" << (p1[i].x - p0[i].x) << ", " << (p1[i].y - p0[i].y) << ")" << endl;
+            cout << " Flow vector: (" << optic_Flow[i].x << ", " << optic_Flow[i].y<< ")" << endl;
         }
         }
         add(frame, mask, frame);
@@ -107,4 +117,6 @@ void OpticalFlowTracker::processFrame()
         imshow("Optical Flow", frame);
         waitKey(1);
     }
+    opticFlowCallback(optic_Flow);
 }
+
