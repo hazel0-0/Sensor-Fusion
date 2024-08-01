@@ -32,10 +32,12 @@ private:
     bool calibrate;
     bool showRectify;
     bool record;
+    bool showOpticFlow;
     
     QPushButton *calibrateButton;
     QPushButton *rectifyButton;
     QPushButton *recordButton;
+    QPushButton *opticButton;
 
     struct MyCallback : Libcam2OpenCV::Callback {
         Window* window = nullptr;
@@ -59,7 +61,7 @@ private:
     void onCalibrateButtonClicked();
     void onRecordButtonClicked();
     void onRectifyButtonClicked();
-    
+    void onopticButtonClicked();
     
 };
 

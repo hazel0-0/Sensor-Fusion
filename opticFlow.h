@@ -25,21 +25,22 @@ public:
     void stop();
     void processFrame();
     void addFrame(const Mat& frame);
-    void setOpticFlowCallback(std::function<void(const std::vector<Point2f>)> callback);
+    void setOpticFlowCallback(std::function<void(const cv::Vec2d)> callback);
 
 private:
+
     
     int maxCorners;
     std::vector<Scalar> colors;
     Mat old_gray;
-    std::vector<Point2f> p0, p1, optic_Flow;
+    std::vector<Point2f> p0, p1;
     Mat mask;
     
     std::thread processingThread;
     std::atomic<bool> running;
     std::mutex frameMutex;
     std::condition_variable frameCondition;
-    std::function<void(const std::vector<Point2f>)> opticFlowCallback;
+    std::function<void(const cv::Vec2d)> opticFlowCallback;
     Mat currentFrame;
     bool frameReady;
 };
