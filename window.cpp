@@ -22,13 +22,18 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     connect(rectifyButton, &QPushButton::clicked, this, &Window::onRectifyButtonClicked);
     connect(opticButton, &QPushButton::clicked, this, &Window::onopticButtonClicked);
 
+
+    
+    vLayout = new QVBoxLayout();
+    vLayout->addWidget(calibrateButton);
+    vLayout->addWidget(recordButton);
+    vLayout->addWidget(rectifyButton);
+    vLayout->addWidget(opticButton);
+    
     hLayout = new QHBoxLayout();
     hLayout->addWidget(thermo);
     hLayout->addWidget(image);
-    hLayout->addWidget(calibrateButton);
-    hLayout->addWidget(recordButton);
-    hLayout->addWidget(rectifyButton);
-    hLayout->addWidget(opticButton);
+    hLayout->addLayout(vLayout);
 
     setLayout(hLayout);
     
@@ -39,12 +44,12 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
         display(correctedFrame);
 
     });
-    calibrator.setFrameCallback([this](const cv::Mat& Frame) {
+    calibrator.setFrameCallback([this](const cv::Mat& Frame, bool ptsfound) {
 	static int frameCounter = 0;
 	display(Frame);
-	frameCounter++;
-        if (frameCounter == 5) 
-	{record = false;recordButton->setText(record ? "Stop record" : "record");}
+	if (ptsfound)frameCounter++;
+    if (frameCounter == 5) 
+	{record = false; frameCounter=0; recordButton->setText(record ? "Stop record" : "record");}
     });
 }
 
@@ -101,7 +106,7 @@ void Window::onRecordButtonClicked()
 void Window::onCalibrateButtonClicked() {
     calibrate = !calibrate;
     if(calibrate == true) calibrator.start();
-    if(calibrate == false) calibrator.stop();
+    if(calibrate == false) calibrator.stopCollection();
     calibrateButton->setText(calibrate ? "Stop Calibrate" : "Calibrate");
     
 }

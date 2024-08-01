@@ -18,7 +18,7 @@ public:
     void stop();
     void addFrame(const cv::Mat& frame);
     void stopCollection();
-    void setFrameCallback(std::function<void(const cv::Mat&)> callback);
+    void setFrameCallback(std::function<void(const cv::Mat&, bool ptsfound)> callback);
     void performCalibration();
 
 private:
@@ -36,7 +36,7 @@ private:
     cv::Mat currentFrame;
     std::vector<std::vector<cv::Point2f>> imagePoints; 
     std::mutex mtx;
-    std::function<void(const cv::Mat&)> frameCallback;
+    std::function<void(const cv::Mat&,bool ptsfound)> frameCallback;
     
 };
 

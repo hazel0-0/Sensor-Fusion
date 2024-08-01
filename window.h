@@ -28,6 +28,7 @@ public:
 private:
     QwtThermo    *thermo;
     QHBoxLayout  *hLayout;
+    QVBoxLayout  *vLayout;
     QLabel       *image;
     bool calibrate;
     bool showRectify;

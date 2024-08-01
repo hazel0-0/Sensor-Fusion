@@ -15,11 +15,16 @@ void Calibration::start() {
 }
 
 void Calibration::stop() {
+    running = false;
     frameCondition.notify_all();
     if (calibrationThread.joinable()) {
         calibrationThread.join();
     }
 }
+void Calibration::stopCollection()
+{
+        running = false;
+    }
 
 void Calibration::addFrame(const cv::Mat& frame) {
     {
@@ -31,14 +36,13 @@ void Calibration::addFrame(const cv::Mat& frame) {
 }
 
 
-void Calibration::stopCollection(){
-    running = false;
-}
 
-void Calibration::setFrameCallback(std::function<void(const cv::Mat&)> callback)
+void Calibration::setFrameCallback(std::function<void(const cv::Mat&, bool ptsfound)> callback)
 {
     frameCallback = callback;
+    
 }
+
 
 
 void Calibration::processImages() {
@@ -51,7 +55,6 @@ void Calibration::processImages() {
             if (!running)
                 break;
             frameReady = false;
-
             image = currentFrame.clone();
         }
         
@@ -59,15 +62,15 @@ void Calibration::processImages() {
         continue;
 
         std::vector<cv::Point2f> pointBuf;
-        bool found = cv::findChessboardCorners(image, boardSize, pointBuf,
-                                               cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
-        if (found) {
+        
+        bool found = cv::findChessboardCorners(image, boardSize, pointBuf,cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_NORMALIZE_IMAGE);
+        
+        if (found) 
+        {
                  
             cv::drawChessboardCorners(image, cv::Size(9,6),  pointBuf, found);
-            if (frameCallback)
-            {
-                 frameCallback(image);
-            }            
+            
+            if (frameCallback) frameCallback(image,found);
             cv::Mat viewGray;
             cv::cvtColor(image, viewGray, cv::COLOR_BGR2GRAY);
             cv::cornerSubPix(viewGray, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
@@ -77,13 +80,15 @@ void Calibration::processImages() {
                 imagePoints.push_back(pointBuf);
             }
             
+            
+            
+            
         }
-        else frameCallback(image);
+        
+        else if (frameCallback) frameCallback(image,found);
         
     }   
-    performCalibration();
-    stop();
-
+    performCalibration(); 
 }
 
 void Calibration::performCalibration() {
@@ -92,7 +97,7 @@ void Calibration::performCalibration() {
         std::cout << "No corners found in any image. Calibration cannot proceed." << std::endl;
         return;
     }
-
+    
     std::vector<std::vector<cv::Point3f>> objectPoints(1);
     for (int i = 0; i < boardSize.height; ++i) {
         for (int j = 0; j < boardSize.width; ++j) {
@@ -110,4 +115,7 @@ void Calibration::performCalibration() {
     std::cout << "* RMS error = " << rms << std::endl;
     std::cout << "* Camera matrix (K) = " << std::endl << "  " << cameraMatrix.row(0) << cameraMatrix.row(1) << cameraMatrix.row(2) << std::endl;
     std::cout << "* Distortion coefficient (k1, k2, p1, p2, k3, ...) = " << std::endl << "  " << distCoeffs.t() << std::endl;
+    
+    stop();
+
 }
