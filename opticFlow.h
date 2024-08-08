@@ -12,6 +12,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
+#include "alphabot.h"
+#include "pigpio.h"
 
 using namespace cv;
 using namespace std;
@@ -25,11 +27,19 @@ public:
     void stop();
     void processFrame();
     void addFrame(const Mat& frame);
-    void setOpticFlowCallback(std::function<void(const cv::Vec2d)> callback);
+    void setOpticFlowCallback(std::function<void(const cv::Vec2d&)> callback);
+    struct TimerData {
+    static bool motorCondition;
+    };
+    TimerData data;
 
 private:
-
-    
+/*
+    static void timerCallback(void* userdata) {
+        TimerData *data = static_cast<TimerData*>(userdata);
+        data->motorCondition = !data->motorCondition;
+    }
+    */
     int maxCorners;
     std::vector<Scalar> colors;
     Mat old_gray;
@@ -40,9 +50,10 @@ private:
     std::atomic<bool> running;
     std::mutex frameMutex;
     std::condition_variable frameCondition;
-    std::function<void(const cv::Vec2d)> opticFlowCallback;
+    std::function<void(const cv::Vec2d&)> opticFlowCallback;
     Mat currentFrame;
     bool frameReady;
+    AlphaBot alphabot;
 };
 
 #endif // OPTICFLOW_H

@@ -17,11 +17,14 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     recordButton = new QPushButton("Record");
     rectifyButton = new QPushButton("Rectify");
     opticButton = new QPushButton("OpticFlow");
+    startBotButton = new QPushButton("Start Bot"); 
+    
     connect(calibrateButton, &QPushButton::clicked, this, &Window::onCalibrateButtonClicked);
     connect(recordButton, &QPushButton::clicked, this, &Window::onRecordButtonClicked);
     connect(rectifyButton, &QPushButton::clicked, this, &Window::onRectifyButtonClicked);
     connect(opticButton, &QPushButton::clicked, this, &Window::onopticButtonClicked);
-
+    connect(startBotButton, &QPushButton::clicked, this, &Window::onStartBotButtonClicked);
+    
 
     
     vLayout = new QVBoxLayout();
@@ -29,6 +32,7 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     vLayout->addWidget(recordButton);
     vLayout->addWidget(rectifyButton);
     vLayout->addWidget(opticButton);
+    vLayout->addWidget(startBotButton);
     
     hLayout = new QHBoxLayout();
     hLayout->addWidget(thermo);
@@ -38,8 +42,14 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     setLayout(hLayout);
     
     camera.start();
-    
-    
+    angle = new AngleNavigation();
+    alphabot = new AlphaBot();
+
+    tracker.setOpticFlowCallback([this](const cv::Vec2d& optic_Flow) {
+        angle->filter(optic_Flow);
+    });
+
+
     distortionCorrector.setFrameCallback([this](const cv::Mat& correctedFrame) {
         display(correctedFrame);
 
@@ -58,29 +68,24 @@ Window::~Window() {
     calibrator.stop();
     tracker.stop();
     distortionCorrector.stop();
+    angle->stop();
+   gpioSetTimerFuncEx(0,1000,NULL,(void*)this);
+   // gpioTerminate();
 }
-
 
 void Window::updateImage(const cv::Mat &mat) {
     
     
-    if (record) 
-    {
-	
-	calibrator.addFrame(mat);
-	
-
-
+    if (record) {
+	    calibrator.addFrame(mat);
     }
     
-    else if (showRectify) 
-    {
+    else if (showRectify) {
         distortionCorrector.addFrame(mat);
     }
     
-    else
-    {
-     display(mat);
+    else{
+        display(mat);
     }
 
 }
@@ -120,9 +125,23 @@ void Window::onRectifyButtonClicked()
 void Window::onopticButtonClicked()
 {
     showOpticFlow = !showOpticFlow;
-    if(showOpticFlow == true) tracker.start();
-    if(showOpticFlow == false) tracker.stop();
+    if(showOpticFlow == true) {tracker.start(); angle->start(); }
+    if(showOpticFlow == false) {tracker.stop(); angle->stop();}
     opticButton->setText(showOpticFlow ? "Stop" : "OpticFlow");
 }
 
+void Window::onStartBotButtonClicked() {
+    // Start AlphaBot and set right wheel speed //alphabot->start(); // alphabot->setRightWheelSpeed(0.2f);
+
+    // Set timer to stop the bot after 3 seconds    //gpioSetTimerFuncEx(0, 1000, timerCallback, (void*)this);
+    angle->angleControl(90.0);
+    gpioSetTimerFuncEx(0, 1000, timerCallback, (void*)this);
+}
+
+void Window::timerEvent()
+{
+    std::cout<<"11111111111111111111 "<<std::endl;
+    //alphabot->setRightWheelSpeed(0);
+    //alphabot->stop();
+}
 
