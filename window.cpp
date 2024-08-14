@@ -44,9 +44,15 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     camera.start();
     angle = new AngleNavigation();
     alphabot = new AlphaBot();
+    affinetrans = new AffineTrans();
 
-    tracker.setOpticFlowCallback([this](const cv::Vec2d& optic_Flow) {
-        angle->filter(optic_Flow);
+    tracker.setOpticFlowCallback([this](const OpticFlowParams& params) {
+        angle->filter(params.of);
+
+        if (!params.pts1.empty())
+        {affinetrans->addTask(params.of, params.pts0, params.pts1, params.t);
+            }
+
     });
 
 
@@ -69,8 +75,9 @@ Window::~Window() {
     tracker.stop();
     distortionCorrector.stop();
     angle->stop();
-   gpioSetTimerFuncEx(0,1000,NULL,(void*)this);
-   // gpioTerminate();
+    gpioSetTimerFuncEx(0,1000,NULL,(void*)this);
+    alphabot->stop();
+    affinetrans->stop();
 }
 
 void Window::updateImage(const cv::Mat &mat) {
@@ -125,23 +132,34 @@ void Window::onRectifyButtonClicked()
 void Window::onopticButtonClicked()
 {
     showOpticFlow = !showOpticFlow;
-    if(showOpticFlow == true) {tracker.start(); angle->start(); }
-    if(showOpticFlow == false) {tracker.stop(); angle->stop();}
+    if(showOpticFlow == true) {
+        tracker.start(); 
+        affinetrans->start(); 
+        angle->start(); 
+        }
+    if(showOpticFlow == false) {
+        tracker.stop(); 
+        affinetrans->stop(); 
+        angle->stop(); 
+        }
     opticButton->setText(showOpticFlow ? "Stop" : "OpticFlow");
 }
 
 void Window::onStartBotButtonClicked() {
-    // Start AlphaBot and set right wheel speed //alphabot->start(); // alphabot->setRightWheelSpeed(0.2f);
-
-    // Set timer to stop the bot after 3 seconds    //gpioSetTimerFuncEx(0, 1000, timerCallback, (void*)this);
-    angle->angleControl(90.0);
-    gpioSetTimerFuncEx(0, 1000, timerCallback, (void*)this);
+    
+    // Start AlphaBot and set right wheel speed 
+    alphabot->start(); 
+    //alphabot->setRightWheelSpeed(0.2f);
+    
+    // turning control test
+     angle->angleControl(90.0);
+    //gpioSetTimerFuncEx(0, 3000, timerCallback, (void*)this);
 }
+
+
 
 void Window::timerEvent()
 {
-    std::cout<<"11111111111111111111 "<<std::endl;
-    //alphabot->setRightWheelSpeed(0);
-    //alphabot->stop();
+
 }
 

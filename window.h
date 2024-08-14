@@ -11,6 +11,8 @@
 #include "opticFlow.h"
 #include "distortionCorrection.h"
 #include "navigation.h"
+#include "affineTrans.h"
+
 
 class Window : public QWidget
 {
@@ -66,6 +68,7 @@ private:
     DistortionCorrection distortionCorrector; // Add the DistortionCorrection instance
     AngleNavigation* angle;
     AlphaBot* alphabot;
+    AffineTrans* affinetrans;
 
 private:
     void onCalibrateButtonClicked();

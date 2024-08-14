@@ -18,20 +18,47 @@
 using namespace cv;
 using namespace std;
 
+/*
+struct OpticFlowParams {
+    cv::Vec2d of;  
+    std::vector<cv::Point2f> pts0;
+    std::vector<cv::Point2f> pts1;
+    float t;
+};
+*/
+struct OpticFlowParams {
+    cv::Vec2d of;  
+    std::vector<cv::Point2f> pts0;
+    std::vector<cv::Point2f> pts1;
+    float t;
+
+    // 构造函数必须初始化引用类型的成员变量
+    OpticFlowParams(cv::Vec2d of_init, 
+                    std::vector<cv::Point2f> pts0_init, 
+                    std::vector<cv::Point2f> pts1_init, 
+                    float t_init) 
+        : of(of_init), pts0(pts0_init), pts1(pts1_init), t(t_init) {}
+};
+
+
 class OpticalFlowTracker
 {
 public:
+    
     OpticalFlowTracker(int maxCorners = 100);
     ~OpticalFlowTracker();
+
+
     void start();
     void stop();
     void processFrame();
     void addFrame(const Mat& frame);
-    void setOpticFlowCallback(std::function<void(const cv::Vec2d&)> callback);
+    void setOpticFlowCallback(std::function<void(OpticFlowParams)> callback);
     struct TimerData {
     static bool motorCondition;
     };
     TimerData data;
+
 
 private:
 /*
@@ -50,10 +77,12 @@ private:
     std::atomic<bool> running;
     std::mutex frameMutex;
     std::condition_variable frameCondition;
-    std::function<void(const cv::Vec2d&)> opticFlowCallback;
+    std::function<void(OpticFlowParams)> opticFlowCallback;
     Mat currentFrame;
     bool frameReady;
     AlphaBot alphabot;
+    //OpticFlowParams params;
+     
 };
 
 #endif // OPTICFLOW_H
