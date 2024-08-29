@@ -20,6 +20,7 @@ void Calibration::stop() {
     if (calibrationThread.joinable()) {
         calibrationThread.join();
     }
+    imagePoints.clear();
 }
 void Calibration::stopCollection()
 {

@@ -47,12 +47,12 @@ Window::Window() : calibrate(false) , record(false), showRectify(false),showOpti
     affinetrans = new AffineTrans();
 
     tracker.setOpticFlowCallback([this](const OpticFlowParams& params) {
-        angle->filter(params.of);
-
+        angle->filter(params.of, params.t);
+      // /*
         if (!params.pts1.empty())
         {affinetrans->addTask(params.of, params.pts0, params.pts1, params.t);
             }
-
+       //     */
     });
 
 
@@ -134,25 +134,33 @@ void Window::onopticButtonClicked()
     showOpticFlow = !showOpticFlow;
     if(showOpticFlow == true) {
         tracker.start(); 
-        affinetrans->start(); 
+        //affinetrans->start(); 
         angle->start(); 
         }
     if(showOpticFlow == false) {
         tracker.stop(); 
-        affinetrans->stop(); 
+        //affinetrans->stop(); 
         angle->stop(); 
         }
     opticButton->setText(showOpticFlow ? "Stop" : "OpticFlow");
 }
 
 void Window::onStartBotButtonClicked() {
-    
-    // Start AlphaBot and set right wheel speed 
-    alphabot->start(); 
+    // Start AlphaBot and set right wheel speed //
+    //alphabot->start(); 
     //alphabot->setRightWheelSpeed(0.2f);
+    //alphabot->setLeftWheelSpeed(0);
+    // Set timer to stop the bot after 3 seconds    //gpioSetTimerFuncEx(0, 1000, timerCallback, (void*)this);
+    static int frameCounter = 0;
+    frameCounter++;
+    if (frameCounter == 1) angle->angleControl(30.0);
+    if (frameCounter == 2) angle->angleControl(60.0);
+    if (frameCounter == 3) angle->angleControl(90.0);
+    if (frameCounter == 4) frameCounter = 0;
     
     // turning control test
-     angle->angleControl(90.0);
+    
+    //angle->angleControl(60.0);
     //gpioSetTimerFuncEx(0, 3000, timerCallback, (void*)this);
 }
 
@@ -160,6 +168,19 @@ void Window::onStartBotButtonClicked() {
 
 void Window::timerEvent()
 {
+    std::cout<<"11111111111111111111 "<<std::endl;
+    
+    //curentpoints = track->getpoints();
+    
+    //Affinetransform->pointscallback(curentpoints, opticflow);
 
+    //cv::Vec2D opticflow = tracker->setOpticFlowCallback([this](const cv::Vec2d& optic_Flow) );
+
+    // Set the optical flow callback
+
+    
+    
+    //alphabot->setRightWheelSpeed(0);
+    //alphabot->stop();
 }
 

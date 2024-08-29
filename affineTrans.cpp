@@ -1,6 +1,6 @@
 #include "affineTrans.h"
 #include <queue>
-
+static float current_angle = 0.0f;
 AffineTrans::AffineTrans() : ready(false), done(false), running(false) {}
 
 AffineTrans::~AffineTrans() {
@@ -103,7 +103,7 @@ void AffineTrans::affineTransEstimate(const cv::Vec2d opticFlow, std::vector<Poi
         if (result.p.y != 0 && result.p.x != 0) {
             posAngle = tan;
         }
-        std::cout << current_angle*(180/3.1415) <<"  "<< timeElapsed <<"  "<< angle<<"  "<< angularVelocity <<"  ["<< displacement[0] << ", " << displacement[1] <<"]  ["<< opticFlow[0]<< ", " << opticFlow[1] <<"]  "<< posAngle <<"  ["<<  (transformMatrix.at<double>(0, 0)) << ","<< (transformMatrix.at<double>(0, 1))<<" ]  ["<< (transformMatrix.at<double>(1, 0))<<","<<(transformMatrix.at<double>(1, 1))<<"]"<< std::endl;
+        std::cout << "current_angle: " << current_angle*(180/3.1415) <<",  timeElapsed: "<< timeElapsed <<",  angle: "<< angle<<",  angularVelocity: "<< angularVelocity <<",  displacement: ["<< displacement[0] << ", " << displacement[1] <<"],  opticFlow: ["<< opticFlow[0]<< ", " << opticFlow[1] <<"],  "<< posAngle <<"transformMatrix:  ["<<  (transformMatrix.at<double>(0, 0)) << ","<< (transformMatrix.at<double>(0, 1))<<" ],  ["<< (transformMatrix.at<double>(1, 0))<<","<<(transformMatrix.at<double>(1, 1))<<"]"<< std::endl;
 
     }
 

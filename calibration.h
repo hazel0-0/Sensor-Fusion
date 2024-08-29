@@ -24,7 +24,7 @@ public:
 private:
     void processImages();
 
-    std::vector<cv::Mat> images;
+   // std::vector<cv::Mat> images;
     cv::Size boardSize;
     float squareSize;
 

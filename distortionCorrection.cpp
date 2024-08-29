@@ -65,9 +65,9 @@ void DistortionCorrection::process()
         if (map1.empty() || map2.empty())
         {
             initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), Mat(), frame.size(), CV_32FC1, map1, map2);
+
         }
         remap(frame, correctedFrame, map1, map2, INTER_LINEAR);
-        putText(correctedFrame, "Rectified", Point(5, 15), FONT_HERSHEY_PLAIN, 1, Scalar(0, 255, 0));
 
         if (frameCallback)
         {

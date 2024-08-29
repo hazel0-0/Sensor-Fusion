@@ -27,13 +27,12 @@ struct OpticFlowParams {
 };
 */
 struct OpticFlowParams {
-    cv::Vec2d of;  
+    cv::Vec2d &of;  
     std::vector<cv::Point2f> pts0;
     std::vector<cv::Point2f> pts1;
     float t;
 
-    // 构造函数必须初始化引用类型的成员变量
-    OpticFlowParams(cv::Vec2d of_init, 
+    OpticFlowParams(cv::Vec2d &of_init, 
                     std::vector<cv::Point2f> pts0_init, 
                     std::vector<cv::Point2f> pts1_init, 
                     float t_init) 

@@ -48,17 +48,13 @@ void OpticalFlowTracker::stop()
 }
 void OpticalFlowTracker::addFrame(const Mat& frame)
 {
-   // static int frameCounter = 0;  // A static counter that tracks the number of frames received
 
     {
         std::lock_guard<std::mutex> lock(frameMutex);
-        //frameCounter++;
-        //if (frameCounter == 1) {
+
             frame.copyTo(currentFrame);
-            frameReady = true;
-          //  frameCounter = 0;  
+            frameReady = true; 
             frameCondition.notify_one();  // notify condition variable
-        //} 
     }
 }
 
@@ -126,7 +122,6 @@ void OpticalFlowTracker::processFrame()
     std::vector<uchar> status;
     std::vector<float> err;
     TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
-    //cout << "Number of points: " << p0.size() << endl;
     if (p0.size()< k/2 | p0.size()==0) {
         old_gray.release();//track new good Features
         continue;
@@ -134,17 +129,7 @@ void OpticalFlowTracker::processFrame()
     
     
     calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, Size(15, 15), 2, criteria);
-   /* 
-    if (ptschange)
-        {
-            if (params.pts0 != p0)
-            {
-            ptschange = false;
-            std::cout<<"point_0 get"<<std::endl;
-            params.pts0 = p0;
-            }
-        }
-*/
+
     std::vector<Point2f> good_new;
     
     if (p0.size() == p1.size()) {
@@ -173,16 +158,12 @@ void OpticalFlowTracker::processFrame()
             optic_Flow[1] /= static_cast<double>(good_new.size());
             signal[1] += optic_Flow[1];
          }
-        // cout << " Average Flow vector: " << optic_Flow[0] << ", " << optic_Flow[1] << endl;
-        // cout << " Average signal: " << signal[0] << ", " << signal[1] << endl;
 
        if (opticFlowCallback)  
        {
            auto currentTime = std::chrono::high_resolution_clock::now();
            std::chrono::duration<double> timeSpan = currentTime - previousTime;//Time between frames
            float timeElapsed= timeSpan.count(); 
-           //params.of = optic_Flow;
-           //params.pts1 = {}; // set empty vector to avoid affinetrans happened to every opticFlow vector
            OpticFlowParams params(optic_Flow, p0, p1, timeElapsed);
            opticFlowCallback(params);
            previousTime = currentTime;
@@ -191,25 +172,7 @@ void OpticalFlowTracker::processFrame()
         if(abs(signal[0]) > 100) {
         
         old_gray.release();//release old_gray to track new good Features
-  /*
-        ptschange = true;   
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> timeSpan = currentTime - previousTime;//Time between frames
-        std::cout<<"the signal:"<< signal <<std::endl;
-        params.of=signal;
-        params.t = timeSpan.count(); 
-        params.pts1 = p1;
-        opticFlowCallback(params);
-        previousTime = currentTime;
-    }
-    //when the robot first have a horizontal migration
-    else if (ptschange) {
-        if (abs(signal[0]) > 1){
-            previousTime = std::chrono::high_resolution_clock::now();
-            params.pts0 = p0;
-            std::cout<<"horizontal migration happened"<< signal <<std::endl;
-            ptschange = false;
-        } */
+
     }
    
         // imshow("Optical Flow", frame);
