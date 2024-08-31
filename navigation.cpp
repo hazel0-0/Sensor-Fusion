@@ -97,15 +97,15 @@ void AngleNavigation::processFilter()
             float s;// the arc length for the frame center movement in the real world.
             s = filtered_signal/p;//divide the proportion of opticflow value to the distance in the real world.
             static float angle;
-            angle +=  s/r;
+            angle =  s/r;
             
             cv::Mat transformMatrix = (cv::Mat_<float>(2, 3) << cos(angle), -sin(angle), lidar_r*0.5*cos(M_PI-angle),
                                                   sin(angle), cos(angle), lidar_r * 0.5*sin(M_PI-angle));
 
             //stop the motor when it arrived at target_angle
+            float angularVelocity = angle / timeElapsed;
+            current_angle += angle*180/M_PI;
             
-            current_angle = angle*180/M_PI;
-            float angularVelocity = current_angle / timeElapsed;
             std::cout  <<"t: "<< timeElapsed <<", angle: "<< current_angle <<", V: "<< angularVelocity << ", optic_flow: " << optic_flow << ", s: " << s <<", signal: "<< x << ", Filtered_signal: " << filtered_signal << "," <<  std::endl;
             std::cout << "tramsformMatrix: " << transformMatrix << std::endl;
             MovParams params(transformMatrix, current_angle, angularVelocity, timeElapsed);
