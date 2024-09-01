@@ -87,7 +87,9 @@ void AngleNavigation::processFilter()
 
         
         //the differential move distance of the opticflow.
+        
         float x = std::sqrt(optic_flow[0]*optic_flow[0] + optic_flow[1] *optic_flow[1]);
+        if (optic_flow[0]>0) x=-x;
         float filtered_signal = low_pass.filter(x);
 
 
@@ -97,15 +99,21 @@ void AngleNavigation::processFilter()
             float s;// the arc length for the frame center movement in the real world.
             s = filtered_signal/p;//divide the proportion of opticflow value to the distance in the real world.
             static float angle;
+
             angle =  s/r;
             
-            cv::Mat transformMatrix = (cv::Mat_<float>(2, 3) << cos(angle), -sin(angle), lidar_r*0.5*cos(M_PI-angle),
-                                                  sin(angle), cos(angle), lidar_r * 0.5*sin(M_PI-angle));
+            //working out according to instant angle.
+            cv::Mat transformMatrix = (cv::Mat_<float>(2, 3) << cos(angle), -sin(angle), lidar_r - lidar_r*cos(angle),
+                                                  sin(angle), cos(angle), -lidar_r* sin(angle));
 
             //stop the motor when it arrived at target_angle
             float angularVelocity = angle / timeElapsed;
             current_angle += angle*180/M_PI;
-            
+            /* 
+            //working out according to turned angle.
+            cv::Mat transformMatrix = (cv::Mat_<float>(2, 3) << -cos(current_angle), sin(current_angle), lidar_r - lidar_r*cos(current_angle)-,
+                                                  sin(current_angle), cos(current_angle), - lidar_r * sin(current_angle));
+            */
             std::cout  <<"t: "<< timeElapsed <<", angle: "<< current_angle <<", V: "<< angularVelocity << ", optic_flow: " << optic_flow << ", s: " << s <<", signal: "<< x << ", Filtered_signal: " << filtered_signal << "," <<  std::endl;
             std::cout << "tramsformMatrix: " << transformMatrix << std::endl;
             MovParams params(transformMatrix, current_angle, angularVelocity, timeElapsed);
